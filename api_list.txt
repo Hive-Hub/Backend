@@ -1,0 +1,1564 @@
+------------------------------------------------
+API NAME
+Student Login
+Endpoint
+POST
+/api/auth/login/
+Description
+Student login using email/password.
+Headers
+Content-Type: application/json
+Authentication Required
+No
+Permissions
+Public
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+{
+    "email": "student@example.com",
+    "password": "password123"
+}
+Success Response JSON
+{
+    "success": true,
+    "message": "Login Successful",
+    "data": {
+        "token": "SIGNED_TOKEN_STRING",
+        "user": {
+            "id": 1,
+            "username": "student_username",
+            "email": "student@example.com",
+            "role": "STUDENT"
+        }
+    }
+}
+Validation Errors
+401 Unauthorized
+{
+    "success": false,
+    "message": "Invalid credentials",
+    "errors": {
+        "detail": "Invalid credentials"
+    }
+}
+Example Requests
+POST /api/auth/login/ HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{"email": "s1@test.com", "password": "pwd"}
+Example Responses
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{"success": true, "message": "Login Successful", "data": {"token": "...", "user": {"id": 1, "username": "student1", "email": "s1@test.com", "role": "STUDENT"}}}
+Notes
+Signed token string must be supplied in Authorization: Bearer <token> header for authenticated requests.
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Student Profile
+Endpoint
+GET
+/api/student/profile/
+Description
+Retrieve authenticated student's profile details.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": {
+        "id": 1,
+        "user": {
+            "id": 2,
+            "username": "student1",
+            "email": "s1@test.com",
+            "role": "STUDENT"
+        },
+        "register_number": "REG01",
+        "name": "Student One",
+        "email": "s1@test.com",
+        "phone": "+999999999",
+        "college": 1,
+        "college_name": "Engineering College",
+        "department": 1,
+        "department_name": "Computer Science",
+        "branch": 1,
+        "branch_name": "AI Engineering",
+        "section": 1,
+        "section_name": "A",
+        "semester": 1,
+        "semester_number": 1,
+        "created_at": "2026-06-27T06:14:43Z"
+    }
+}
+Validation Errors
+401 Unauthorized
+{
+    "success": false,
+    "message": "Authentication Failed",
+    "errors": {
+        "detail": "Invalid token"
+    }
+}
+Example Requests
+GET /api/student/profile/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": {...}}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Update Student Profile
+Endpoint
+PATCH
+/api/student/profile/
+Description
+Modify student's phone number.
+Headers
+Authorization: Bearer <token>
+Content-Type: application/json
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+{
+    "phone": "+919988776655"
+}
+Success Response JSON
+{
+    "success": true,
+    "message": "Profile Updated",
+    "data": {
+        "id": 1,
+        "name": "Student One",
+        "phone": "+919988776655",
+        ...
+    }
+}
+Validation Errors
+400 Bad Request
+{
+    "success": false,
+    "message": "Validation Error",
+    "errors": {
+        "phone": ["Phone number must be entered in the format: '+999999999'."]
+    }
+}
+Example Requests
+PATCH /api/student/profile/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"phone": "+919988776655"}
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Profile Updated", "data": {...}}
+Notes
+Partial updates are allowed.
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Student Dashboard
+Endpoint
+GET
+/api/student/dashboard/
+Description
+Aggregated view of GPA, rank, recent assignments, schedule for student homepage.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": {
+        "gpa": "8.50",
+        "rank": 2,
+        "completion_percentage": "75.00",
+        "announcements_count": 3,
+        "today_schedule": [
+            {
+                "period": 1,
+                "subject": "DBMS",
+                "start_time": "09:00:00",
+                "end_time": "09:50:00",
+                "room": "Room 101"
+            }
+        ],
+        "recent_assignments": [
+            {
+                "id": 1,
+                "title": "DBMS Lab 1",
+                "deadline": "2026-06-30T12:00:00Z"
+            }
+        ]
+    }
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/student/dashboard/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": {...}}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Student Semester Reports
+Endpoint
+GET
+/api/student/reports/
+Description
+Returns lists of GPA reports generated for the student.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": [
+        {
+            "id": 1,
+            "student": 1,
+            "semester": 1,
+            "semester_number": 1,
+            "cgpa": "8.75",
+            "performance_score": "88.00",
+            "assignments_completed": 8,
+            "ai_assignments_completed": 4,
+            "strengths": "DBMS",
+            "weak_subjects": "Mathematics",
+            "generated_at": "2026-06-27T06:14:43Z"
+        }
+    ]
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/student/reports/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": [...]}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Student Notifications
+Endpoint
+GET
+/api/student/notifications/
+Description
+Lists alerts/notifications generated for the student.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": 1,
+                "title": "Low Experience Index Warning",
+                "message": "Student is experiencing low indicators",
+                "alert_type": "ACADEMIC",
+                "severity": "WARNING",
+                "is_resolved": false,
+                "student": 1,
+                "student_name": "Student One",
+                "created_at": "2026-06-27T06:14:43Z"
+            }
+        ]
+    }
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/student/notifications/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": {...}}
+Notes
+Paginated list of alerts.
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Student Subjects
+Endpoint
+GET
+/api/student/subjects/
+Description
+Lists academic subjects mapped to the student's current semester.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": [
+        {
+            "id": 1,
+            "semester": 1,
+            "subject_catalog": 1,
+            "name": "Database Management Systems",
+            "code": "DBMS",
+            "credits": 4
+        }
+    ]
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/student/subjects/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": [...]}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Subject Units
+Endpoint
+GET
+/api/student/subjects/<id>/units/
+Description
+Lists chapters/units cataloged under a semester subject.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+id (int)
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": [
+        {
+            "id": 1,
+            "subject_catalog": 1,
+            "unit_number": 1,
+            "title": "Introduction to DBMS",
+            "description": "Basic concepts of relational DBs",
+            "topics": [
+                {
+                    "id": 1,
+                    "subject_unit": 1,
+                    "title": "Entity Relationship Diagrams",
+                    "description": "Creating ERDs",
+                    "estimated_hours": 3
+                }
+            ]
+        }
+    ]
+}
+Validation Errors
+404 Not Found
+{"success": false, "message": "Semester Subject not found"}
+Example Requests
+GET /api/student/subjects/1/units/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": [...]}
+Notes
+Includes pre-fetched unit topics array.
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Unit Topics
+Endpoint
+GET
+/api/student/units/<id>/topics/
+Description
+Lists sub-topics of a particular subject unit.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+id (int)
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": [
+        {
+            "id": 1,
+            "subject_unit": 1,
+            "title": "Entity Relationship Diagrams",
+            "description": "Creating ERDs",
+            "estimated_hours": 3
+        }
+    ]
+}
+Validation Errors
+404 Not Found
+{"success": false, "message": "Subject Unit not found"}
+Example Requests
+GET /api/student/units/1/topics/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": [...]}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Student Timetable Schedule
+Endpoint
+GET
+/api/student/schedule/
+Description
+Returns timetable entries of lectures for the current day.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": [
+        {
+            "id": 1,
+            "timetable": 1,
+            "day_of_week": "MONDAY",
+            "period_number": 1,
+            "start_time": "09:00:00",
+            "end_time": "09:50:00",
+            "subject": 1,
+            "subject_name": "DBMS",
+            "subject_code": "DBMS",
+            "faculty": 1,
+            "faculty_name": "Dr. Ramesh",
+            "room": "Room 301"
+        }
+    ]
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/student/schedule/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": [...]}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Student Academic Progress
+Endpoint
+GET
+/api/student/progress/
+Description
+Subject-wise completion percentages based on Daily reviews topics taught.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": [
+        {
+            "id": 1,
+            "student": 1,
+            "semester_subject": 1,
+            "subject_name": "DBMS",
+            "subject_code": "DBMS",
+            "completion_percentage": "65.00",
+            "ai_assignments_completed": 3,
+            "total_ai_assignments": 5,
+            "last_updated": "2026-06-27T06:14:43Z"
+        }
+    ]
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/student/progress/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": [...]}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Resources List
+Endpoint
+GET
+/api/resources/
+Description
+Filterable catalog search containing shared course library resources.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Authenticated
+URL Parameters
+None
+Query Parameters
+semester (int, optional)
+subject (string, optional)
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": [
+        {
+            "id": 1,
+            "semester": 1,
+            "subject": 1,
+            "subject_name": "DBMS",
+            "file": 1,
+            "file_name": "DBMS_Unit1_Notes.pdf",
+            "file_url": "https://mock-supabase-storage.co/StudentHub/DBMS_Unit1_Notes.pdf",
+            "size": 42000,
+            "resource_type": "NOTES"
+        }
+    ]
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/resources/?semester=1&subject=DBMS HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": [...]}
+Notes
+Filters results based on semester and subject code.
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Student Assignments List
+Endpoint
+GET
+/api/student/assignments/
+Description
+Retrieves assignments scheduled for the student's semester.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": 1,
+                "title": "DBMS Lab 1",
+                "description": "Write query statements",
+                "deadline": "2026-06-30T12:00:00Z",
+                "semester_subject": 1,
+                "subject_name": "DBMS",
+                "assignment_type": "COLLEGE",
+                "external_link": "https://example.com/details",
+                "start_date": null,
+                "end_date": null,
+                "generated_from_review": null,
+                "difficulty": "MEDIUM",
+                "topic": "SQL Queries",
+                "generated_questions": []
+            }
+        ]
+    }
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/student/assignments/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": {...}}
+Notes
+Paginated standard college assignments.
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Student Assignment Details
+Endpoint
+GET
+/api/student/assignments/<id>/
+Description
+Expose metadata of a specific assignment task.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+id (int)
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": {
+        "id": 1,
+        "title": "DBMS Lab 1",
+        "description": "Write query statements",
+        "deadline": "2026-06-30T12:00:00Z",
+        ...
+    }
+}
+Validation Errors
+404 Not Found
+{"success": false, "message": "Assignment not found"}
+Example Requests
+GET /api/student/assignments/1/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": {...}}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Submit Assignment
+Endpoint
+POST
+/api/student/assignments/<id>/submit/
+Description
+Submit answers payload for an assignment. Calculates and returns score.
+Headers
+Authorization: Bearer <token>
+Content-Type: application/json
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+id (int)
+Query Parameters
+None
+Request Body JSON
+{
+    "answers": {
+        "q1": "Answer to Q1",
+        "q2": "Option A"
+    }
+}
+Success Response JSON
+{
+    "success": true,
+    "message": "Assignment Submitted Successfully",
+    "data": {
+        "id": 1,
+        "student": 1,
+        "student_name": "Student One",
+        "assignment": 1,
+        "assignment_title": "DBMS Lab 1",
+        "completed_at": "2026-06-27T11:53:48Z",
+        "is_completed": true,
+        "score": 85,
+        "answers": {
+            "q1": "Answer to Q1",
+            "q2": "Option A"
+        }
+    }
+}
+Validation Errors
+404 Not Found
+{"success": false, "message": "Assignment not found"}
+Example Requests
+POST /api/student/assignments/1/submit/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"answers": {"q1": "A"}}
+Example Responses
+HTTP/1.1 201 Created
+{"success": true, "message": "Assignment Submitted Successfully", "data": {...}}
+Notes
+Grade scoring evaluates answers key structure.
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Student AI Assignments List
+Endpoint
+GET
+/api/student/ai-assignments/
+Description
+List auto-generated quizzes linked to daily class reviews.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": 2,
+                "title": "AI Quiz: relational schema",
+                "description": "Auto-generated quiz",
+                "deadline": "2026-06-30T12:00:00Z",
+                "semester_subject": 1,
+                "assignment_type": "AI_GENERATED",
+                "generated_questions": [
+                    {
+                        "question": "What is schema?",
+                        "options": ["A", "B"],
+                        "answer": "A"
+                    }
+                ]
+            }
+        ]
+    }
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/student/ai-assignments/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": {...}}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Student Question Bank List
+Endpoint
+GET
+/api/student/question-bank/
+Description
+Lists generated study questions filtered for student.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": 1,
+                "subject": 1,
+                "subject_name": "DBMS",
+                "topic": "ERDs",
+                "question_type": "MCQ",
+                "difficulty": "MEDIUM",
+                "question": "What does E in ERD stand for?",
+                "answer": "Entity",
+                "source_review": 1,
+                "created_at": "2026-06-27T06:14:43Z"
+            }
+        ]
+    }
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/student/question-bank/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": {...}}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+Student Announcements List
+Endpoint
+GET
+/api/student/announcements/
+Description
+List section bulletins and updates published by the class representative.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+Student
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": 1,
+                "title": "DBMS Internal Exam postponed",
+                "message": "Exam moves to next Tuesday.",
+                "created_by": 1,
+                "created_by_name": "CR Name",
+                "semester": 1,
+                "created_at": "2026-06-27T06:14:43Z"
+            }
+        ]
+    }
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/student/announcements/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": {...}}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+CR Dashboard
+Endpoint
+GET
+/api/cr/dashboard/
+Description
+Summarized dashboard details for Class Representatives.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+CR
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": {
+        "pending_requests_count": 2,
+        "total_reviews_submitted": 5,
+        "section": "A",
+        "semester": 1
+    }
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/cr/dashboard/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": {...}}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+CR Join Requests List
+Endpoint
+GET
+/api/cr/join-requests/
+Description
+Lists pending student join semester/section enrollment requests.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+CR
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": [
+        {
+            "id": 3,
+            "student": 3,
+            "student_name": "Student Three",
+            "college": 1,
+            "college_name": "Engineering College",
+            "department": 1,
+            "department_name": "Computer Science",
+            "branch": 1,
+            "branch_name": "AI Engineering",
+            "section": 1,
+            "section_name": "A",
+            "semester": 1,
+            "semester_number": 1,
+            "status": "PENDING",
+            "remarks": "Wants to register",
+            "created_at": "2026-06-27T06:14:43Z"
+        }
+    ]
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/cr/join-requests/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": [...]}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+CR Approve Join Request
+Endpoint
+POST
+/api/cr/join-requests/<id>/approve/
+Description
+Approve a pending student join request, creating semester enrollment parameters.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+CR
+URL Parameters
+id (int)
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Request Approved",
+    "data": {
+        "id": 3,
+        "status": "APPROVED",
+        ...
+    }
+}
+Validation Errors
+404 Not Found
+{"success": false, "message": "Join request not found"}
+Example Requests
+POST /api/cr/join-requests/3/approve/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Request Approved", "data": {...}}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+CR Reject Join Request
+Endpoint
+POST
+/api/cr/join-requests/<id>/reject/
+Description
+Reject a student's join request.
+Headers
+Authorization: Bearer <token>
+Content-Type: application/json
+Authentication Required
+Yes
+Permissions
+CR
+URL Parameters
+id (int)
+Query Parameters
+None
+Request Body JSON
+{
+    "remarks": "Incomplete registration details"
+}
+Success Response JSON
+{
+    "success": true,
+    "message": "Request Rejected",
+    "data": {
+        "id": 3,
+        "status": "REJECTED",
+        "remarks": "Incomplete registration details"
+    }
+}
+Validation Errors
+404 Not Found
+{"success": false, "message": "Join request not found"}
+Example Requests
+POST /api/cr/join-requests/3/reject/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"remarks": "Details incorrect"}
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Request Rejected", "data": {...}}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+CR View Student Progress
+Endpoint
+GET
+/api/cr/student-progress/
+Description
+Retrieve subject progress percentages for all students in the CR's section.
+Headers
+Authorization: Bearer <token>
+Authentication Required
+Yes
+Permissions
+CR
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+None
+Success Response JSON
+{
+    "success": true,
+    "message": "Success",
+    "data": [
+        {
+            "id": 1,
+            "student": 1,
+            "student_name": "Student One",
+            "semester_subject": 1,
+            "subject_name": "DBMS",
+            "completion_percentage": "65.00"
+        }
+    ]
+}
+Validation Errors
+401 Unauthorized
+{"success": false, "message": "Authentication Failed"}
+Example Requests
+GET /api/cr/student-progress/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Example Responses
+HTTP/1.1 200 OK
+{"success": true, "message": "Success", "data": [...]}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+CR Daily Class Review Submission
+Endpoint
+POST
+/api/cr/daily-reviews/
+Description
+Submit topics taught during class on a given date to update students progress records.
+Headers
+Authorization: Bearer <token>
+Content-Type: application/json
+Authentication Required
+Yes
+Permissions
+CR
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+{
+    "semester_subject": 1,
+    "timetable_entry": 1,
+    "title": "DBMS Unit 1 Lecture 3",
+    "class_date": "2026-06-27",
+    "topics": [1, 2],
+    "topics_covered": "ER diagrams, mapping rules",
+    "faculty_notes": "Important",
+    "important_questions": "Construct ER Diagram for library",
+    "exam_hints": "Weighted 10 points",
+    "resources": "notes_link"
+}
+Success Response JSON
+{
+    "success": true,
+    "message": "Daily Class Review Submitted",
+    "data": {
+        "id": 1,
+        "semester_subject": 1,
+        "title": "DBMS Unit 1 Lecture 3",
+        "class_date": "2026-06-27",
+        "topics": [1, 2],
+        "topics_covered": "ER diagrams, mapping rules"
+    }
+}
+Validation Errors
+400 Bad Request
+{
+    "success": false,
+    "message": "Validation Error",
+    "errors": {
+        "topics": ["Topic 'Entity Representation' does not belong to subject catalog 'DBMS'."]
+    }
+}
+Example Requests
+POST /api/cr/daily-reviews/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"semester_subject": 1, "title": "Lecture", "class_date": "2026-06-27", "topics": [1]}
+Example Responses
+HTTP/1.1 201 Created
+{"success": true, "message": "Daily Class Review Submitted", "data": {...}}
+Notes
+Selecting topics triggers progress index recalculations for all section students.
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+CR Create Assignment
+Endpoint
+POST
+/api/cr/assignments/
+Description
+Publish standard college assignments for section students.
+Headers
+Authorization: Bearer <token>
+Content-Type: application/json
+Authentication Required
+Yes
+Permissions
+CR
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+{
+    "semester_subject": 1,
+    "title": "DBMS Written Assignment 1",
+    "description": "Solve exercise 3 database normalized mappings.",
+    "deadline": "2026-07-05T12:00:00Z",
+    "external_link": "https://example.com/sheet"
+}
+Success Response JSON
+{
+    "success": true,
+    "message": "College Assignment Created Successfully",
+    "data": {
+        "id": 3,
+        "title": "DBMS Written Assignment 1",
+        "description": "Solve exercise 3 database normalized mappings.",
+        "deadline": "2026-07-05T12:00:00Z",
+        "semester_subject": 1,
+        "assignment_type": "COLLEGE"
+    }
+}
+Validation Errors
+400 Bad Request
+{"success": false, "message": "Assignment deadline must be in the future."}
+Example Requests
+POST /api/cr/assignments/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"semester_subject": 1, "title": "Ass 1", "description": "Solve", "deadline": "2026-07-05T12:00:00Z"}
+Example Responses
+HTTP/1.1 201 Created
+{"success": true, "message": "College Assignment Created Successfully", "data": {...}}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+CR Create Announcement
+Endpoint
+POST
+/api/cr/announcements/
+Description
+Publish messages/notices onto students feeds.
+Headers
+Authorization: Bearer <token>
+Content-Type: application/json
+Authentication Required
+Yes
+Permissions
+CR
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+{
+    "title": "Class Cancelled Tomorrow",
+    "message": "The math class period scheduled for tomorrow is cancelled.",
+    "semester": 1
+}
+Success Response JSON
+{
+    "success": true,
+    "message": "Announcement Created Successfully",
+    "data": {
+        "id": 2,
+        "title": "Class Cancelled Tomorrow",
+        "message": "The math class period scheduled for tomorrow is cancelled.",
+        "semester": 1
+    }
+}
+Validation Errors
+400 Bad Request
+{"success": false, "message": "Announcement message must be at least 10 characters long."}
+Example Requests
+POST /api/cr/announcements/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"title": "Notice", "message": "Class will start at 10 AM.", "semester": 1}
+Example Responses
+HTTP/1.1 201 Created
+{"success": true, "message": "Announcement Created Successfully", "data": {...}}
+Notes
+None
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+CR Upload Resource
+Endpoint
+POST
+/api/cr/resources/upload/
+Description
+Upload a document/asset using multipart form payload, registers metadata in library index.
+Headers
+Authorization: Bearer <token>
+Content-Type: multipart/form-data
+Authentication Required
+Yes
+Permissions
+CR
+URL Parameters
+None
+Query Parameters
+None
+Request Body (Multipart)
+title (text): "DBMS SQL Practice Guide"
+description (text): "Basic commands list"
+semester (text): "1"
+subject (text): "1"
+resource_type (text): "NOTES"
+file (file binary): [Binary PDF file]
+Success Response JSON
+{
+    "success": true,
+    "message": "Resource Uploaded and Cataloged Successfully",
+    "data": {
+        "id": 1,
+        "semester": 1,
+        "subject": 1,
+        "subject_name": "DBMS",
+        "file": 3,
+        "file_name": "dbms_guide.pdf",
+        "file_url": "https://mock-supabase-storage.co/StudentHub/dbms_guide.pdf",
+        "size": 150000,
+        "resource_type": "NOTES"
+    }
+}
+Validation Errors
+400 Bad Request
+{"success": false, "message": "File extension '.exe' is not supported."}
+Example Requests
+POST /api/cr/resources/upload/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Content-Type: multipart/form-data; boundary=---Boundary
+
+---Boundary
+Content-Disposition: form-data; name="semester"
+
+1
+...
+Example Responses
+HTTP/1.1 201 Created
+{"success": true, "message": "Resource Uploaded and Cataloged Successfully", "data": {...}}
+Notes
+Supports PDF, PPT, Word, Excel, and common compressed zip archives.
+------------------------------------------------
+
+------------------------------------------------
+API NAME
+CR Generate AI Questions
+Endpoint
+POST
+/api/cr/generate-questions/
+Description
+Triggers questions and assignment generation based on a specific Daily Class Review topics covered.
+Headers
+Authorization: Bearer <token>
+Content-Type: application/json
+Authentication Required
+Yes
+Permissions
+CR
+URL Parameters
+None
+Query Parameters
+None
+Request Body JSON
+{
+    "review_id": 1
+}
+Success Response JSON
+{
+    "success": true,
+    "message": "AI Questions and Quiz generated successfully",
+    "data": {
+        "id": 4,
+        "title": "AI Quiz: DBMS Unit 1 Lecture 3",
+        "description": "Auto-generated reinforcement quiz...",
+        "deadline": "2026-06-30T11:53:48Z",
+        "semester_subject": 1,
+        "assignment_type": "AI_GENERATED",
+        "generated_questions": [
+            {
+                "question": "Explain components...",
+                "options": ["A", "B"],
+                "answer": "A"
+            }
+        ]
+    }
+}
+Validation Errors
+404 Not Found
+{"success": false, "message": "Daily Class Review not found."}
+Example Requests
+POST /api/cr/generate-questions/ HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"review_id": 1}
+Example Responses
+HTTP/1.1 201 Created
+{"success": true, "message": "AI Questions and Quiz generated successfully", "data": {...}}
+Notes
+None
+------------------------------------------------

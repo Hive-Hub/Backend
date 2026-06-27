@@ -1,0 +1,552 @@
+openapi: 3.0.3
+info:
+  title: QISHub Academic Operating System REST APIs
+  description: Master backend API documentation reference for QISHub Student and CR operations.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api
+    description: Local development server
+paths:
+  /auth/login/:
+    post:
+      summary: Student/CR Login
+      description: Authenticates user credentials using email/password and returns a cryptographically signed Bearer token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: student@example.com
+                password:
+                  type: string
+                  format: password
+                  example: password123
+      responses:
+        '200':
+          description: Login Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Login Successful
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: SIGNED_TOKEN_STRING
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          username:
+                            type: string
+                            example: student1
+                          email:
+                            type: string
+                            example: student@example.com
+                          role:
+                            type: string
+                            example: STUDENT
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid credentials
+
+  /student/profile/:
+    get:
+      summary: Get Student Profile
+      description: Retrieve authenticated student's profile details.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: Student One
+                      register_number:
+                        type: string
+                        example: REG01
+                      phone:
+                        type: string
+                        example: "+999999999"
+    patch:
+      summary: Update Student Profile
+      description: Update student's phone number.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                  example: "+919988776655"
+      responses:
+        '200':
+          description: Profile Updated
+
+  /student/dashboard/:
+    get:
+      summary: Get Student Dashboard
+      description: Retrieve GPA, rank, recent assignments, schedule for student homepage.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+
+  /student/reports/:
+    get:
+      summary: Get Semester Reports
+      description: Returns lists of GPA reports generated for the student.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+
+  /student/notifications/:
+    get:
+      summary: Get Student Notifications
+      description: Lists alerts/notifications generated for the student.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+
+  /student/subjects/:
+    get:
+      summary: Get Student Subjects
+      description: Lists academic subjects mapped to the student's current semester.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+
+  /student/subjects/{id}/units/:
+    get:
+      summary: Get Subject Units
+      description: Lists chapters/units cataloged under a semester subject.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+
+  /student/units/{id}/topics/:
+    get:
+      summary: Get Unit Topics
+      description: Lists sub-topics of a particular subject unit.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+
+  /student/schedule/:
+    get:
+      summary: Get Today's Schedule
+      description: Returns timetable entries of lectures for the current day.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+
+  /student/progress/:
+    get:
+      summary: Get Student Progress
+      description: Returns subject-wise completion percentages based on Daily reviews topics taught.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+
+  /resources/:
+    get:
+      summary: Filter Shared Course Resources
+      description: Filterable catalog search containing shared course library resources.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: semester
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: subject
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+
+  /student/assignments/:
+    get:
+      summary: Get Student Assignments
+      description: Retrieves assignments scheduled for the student's semester.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+
+  /student/assignments/{id}/submit/:
+    post:
+      summary: Submit Assignment
+      description: Submit answers payload for an assignment. Calculates and returns score.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                answers:
+                  type: object
+                  example: {"q1": "Option A"}
+      responses:
+        '201':
+          description: Created
+
+  /student/ai-assignments/:
+    get:
+      summary: Get Student AI Assignments
+      description: List auto-generated quizzes linked to daily class reviews.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+
+  /student/question-bank/:
+    get:
+      summary: Get Question Bank
+      description: Lists generated study questions filtered for student.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+
+  /student/announcements/:
+    get:
+      summary: Get Student Announcements
+      description: List section bulletins and updates published by the class representative.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+
+  /cr/dashboard/:
+    get:
+      summary: CR Dashboard Summary
+      description: Summarized dashboard details for Class Representatives.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+
+  /cr/join-requests/:
+    get:
+      summary: List Join Requests
+      description: Lists pending student join semester/section enrollment requests.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+
+  /cr/join-requests/{id}/approve/:
+    post:
+      summary: Approve Join Request
+      description: Approve a pending student join request, creating semester enrollment parameters.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Request Approved
+
+  /cr/join-requests/{id}/reject/:
+    post:
+      summary: Reject Join Request
+      description: Reject a student's join request.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                remarks:
+                  type: string
+                  example: Rejected due to incorrect semester number.
+      responses:
+        '200':
+          description: Request Rejected
+
+  /cr/student-progress/:
+    get:
+      summary: View Student Progress
+      description: Retrieve subject progress percentages for all students in the CR's section.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+
+  /cr/daily-reviews/:
+    post:
+      summary: Submit Daily Class Review
+      description: Submit topics taught during class on a given date to update students progress records.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - semester_subject
+                - title
+                - class_date
+                - topics
+                - topics_covered
+              properties:
+                semester_subject:
+                  type: integer
+                  example: 1
+                title:
+                  type: string
+                  example: DBMS Lecture 1
+                class_date:
+                  type: string
+                  format: date
+                  example: "2026-06-27"
+                topics:
+                  type: array
+                  items:
+                    type: integer
+                  example: [1, 2]
+                topics_covered:
+                  type: string
+                  example: Relational databases intro
+      responses:
+        '201':
+          description: Daily Class Review Submitted
+
+  /cr/assignments/:
+    post:
+      summary: Publish Assignment
+      description: Publish standard college assignments for section students.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - semester_subject
+                - title
+                - description
+                - deadline
+              properties:
+                semester_subject:
+                  type: integer
+                  example: 1
+                title:
+                  type: string
+                  example: DBMS Assignment 1
+                description:
+                  type: string
+                  example: Exercises from Chapter 1
+                deadline:
+                  type: string
+                  format: date-time
+                  example: "2026-07-05T12:00:00Z"
+      responses:
+        '201':
+          description: Created
+
+  /cr/announcements/:
+    post:
+      summary: Publish Announcement
+      description: Publish messages/notices onto students feeds.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - message
+                - semester
+              properties:
+                title:
+                  type: string
+                  example: Class cancelled tomorrow
+                message:
+                  type: string
+                  example: SQL lecture tomorrow morning is cancelled.
+                semester:
+                  type: integer
+                  example: 1
+      responses:
+        '201':
+          description: Created
+
+  /cr/resources/upload/:
+    post:
+      summary: Upload Resource File
+      description: Upload a document/asset using multipart form payload, registers metadata in library index.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - semester
+                - subject
+                - resource_type
+                - file
+              properties:
+                title:
+                  type: string
+                  example: DBMS guide
+                description:
+                  type: string
+                semester:
+                  type: string
+                  example: "1"
+                subject:
+                  type: string
+                  example: "1"
+                resource_type:
+                  type: string
+                  example: NOTES
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Resource cataloged successfully
+
+  /cr/generate-questions/:
+    post:
+      summary: Generate AI Questions
+      description: Triggers questions and assignment generation based on a specific Daily Class Review topics covered.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - review_id
+              properties:
+                review_id:
+                  type: integer
+                  example: 1
+      responses:
+        '201':
+          description: Created
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

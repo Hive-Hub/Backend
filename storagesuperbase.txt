@@ -1,0 +1,5 @@
+Access key ID : 7374805e28cc261d90bf1f0a22e04994
+Secret access key : 8cd1707e1110f7a6e97118673511b6dbc12fc058290c46a74b917c044000b1a8
+Bucket Name : StudentHub
+Endpoint : https://mhawjsiknivycakrnxpu.storage.supabase.co/storage/v1/s3
+Region : ap-northeast-1

@@ -1,0 +1,19 @@
+API Key : YOUR_GEMINI_API_KEY
+Name : Gemini API Key
+Project name : projects/433288783948
+Project number : 433288783948
+Quickstart : curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent" \
+  -H 'Content-Type: application/json' \
+  -H 'X-goog-api-key: YOUR_GEMINI_API_KEY' \
+  -X POST \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {
+            "text": "Explain how AI works in a few words"
+          }
+        ]
+      }
+    ]
+  }'
